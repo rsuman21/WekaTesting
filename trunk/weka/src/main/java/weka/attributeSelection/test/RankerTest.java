@@ -2,14 +2,19 @@ package weka.attributeSelection.test;
 
 import static org.junit.Assert.*;
 
+import java.util.Vector;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.Ranker;
+import weka.core.Instances;
+import weka.core.Option;
 
-public class RankerTest {
+public class RankerTest<E> {
 
 	public RankerTest() {
 	}
@@ -23,7 +28,17 @@ public class RankerTest {
 	}
 
 	@Test
-	public void numToSelectTipTextTest(){
+	public void globalInfoTest() {
+		Ranker actual = new Ranker();
+		String expected = "Ranker : \n\nRanks attributes by their individual evaluations. "
+			      + "Use in conjunction with attribute evaluators (ReliefF, GainRatio, "
+			      + "Entropy etc).\n";
+		assertEquals(expected, actual.globalInfo());
+	}
+	
+	//This test is to pass because the input should be the same as the output.
+	@Test
+	public void numToSelectTipTextTest_pass(){
 		Ranker rankTest = new Ranker();
 		String actual = rankTest.numToSelectTipText();
 		String expected = "Specify the number of attributes to retain. The default value "
@@ -32,45 +47,96 @@ public class RankerTest {
 		assertEquals(expected, actual);
 		
 	}
-	
+	//This test should pass because the input is different but so will the output. 
+	//So they are not equal to each other. 
 	@Test
-	public void getNumToSelectTest(){
+	public void numToSelectTipTextTest_fail(){
+		Ranker rankTest = new Ranker();
+		String actual = rankTest.numToSelectTipText();
+		String expected = "Specify the number of attributes to retain. The default value ";
+		System.out.println(actual);
+		assertNotSame(expected , actual);
+		
+	}
+	
+	//This test should pass because we inputing a positive integer and the output should be the same.
+	//So the expected and actual should be same. 
+	@Test
+	public void getNumToSelectTest_pass(){
 		Ranker test = new Ranker();
 		test.setNumToSelect(34);
 		int yell = test.getNumToSelect();
 		int expected = 34;
+		System.out.println(yell);
 		assertEquals(expected, yell);
 	}
 	
+	//This test should pass since we are inputting a negative number and the output should be just the same.
+	//So expected should be the same as the input. 
 	@Test
-	public void getCalculatedNumToSelectTest(){
+	public void getNumToSelectTest_fail(){
+		Ranker test = new Ranker();
+		test.setNumToSelect(-4);
+		int yell = test.getNumToSelect();
+		int expected = -4;
+		System.out.println(yell);
+		assertEquals(expected, yell);
+	}
+	
+	//This test should pass because we are inputting a positive number.
+	//The expected should equal the actual.
+	@Test
+	public void getCalculatedNumToSelectTest_pass(){
 		Ranker test = new Ranker();
 		test.setNumToSelect(98);
 		int expected = 98;
 		int actual = test.getCalculatedNumToSelect();
+		System.out.println(actual);
 		assertEquals(expected, actual);
 	}
-	
+
+	//This test should pass because we are inputting a negative integer, and the function sets its variable to the input.
+	//Though the expected will not be same as the actual output, because inside the get function, it checks if the input is positive.
+	//if it isn't, then it create an error. 
 	@Test
-	public void thresholdTipTextTest(){
+	public void getCalculatedNumToSelectTest_fail(){
+		Ranker test = new Ranker();
+		test.setNumToSelect(-98);
+		int expected = -98;
+		int actual = test.getCalculatedNumToSelect();
+		System.out.println(actual);
+		assertNotSame(expected , actual);
+	}
+	
+	//This test should pass since we are inputting nothing, we are just calling the function.
+	//So the expected should equal the actual. 
+	@Test
+	public void thresholdTipTextTest_pass(){
 		Ranker test = new Ranker();
 		String expected = "Set threshold by which attributes can be discarded. Default value "
 			      + "results in no attributes being discarded. Use either this option or "
 			      + "numToSelect to reduce the attribute set.";
 		String actual = test.thresholdTipText();
+		System.out.println(actual);
 		assertEquals(expected, actual);
 	}
 	
+	//This test should pass because we are not inputting anything into the function.
+	//So the expected will not equal the actual.
 	@Test
-	public void thresholdTipTextTest2(){
+	public void thresholdTipTextTest_fail(){
 		Ranker test = new Ranker();
 		String expected = "Set threshold by which attributes can be discarded. Default value ";
 		String actual = test.thresholdTipText();
-		assert(expected != actual);
+		System.out.println(actual);
+		assertNotSame(expected ,actual);
 	}
 	
+	//This test should pass because we are inputting a positive double number.
+	//The expected should equal the actual because it just sets the variable as the input number. 
+	//So the output should be the same as the input. 
 	@Test
-	public void getThresholdTest(){
+	public void getThresholdTest_pass(){
 		Ranker test = new Ranker();
 		double expected = 45.99898998989899;
 		test.setThreshold(45.99898998989899);
@@ -80,8 +146,25 @@ public class RankerTest {
 		
 	}
 	
+	//This test should pass because we are inputting a positive double number.
+	//The expected should equal the actual because it just sets the variable as the input number.
+	//So the output should be the same as the input. 
 	@Test
-	public void getGenerateRankingTest(){
+	public void getThresholdTest_fail(){
+		Ranker test = new Ranker();
+		double expected = -45.99898998989899;
+		test.setThreshold(-45.99898998989899);
+		double actual = test.getThreshold();
+		System.out.println(actual);
+		assert(expected == actual);
+		
+	}
+	
+	//This test should pass because we inputting a boolean, and the function sets its variable to the input.
+	//and then returns that same variable in the get function. 
+	//So the expected should be the same as the actual output. 
+	@Test
+	public void getGenerateRankingTest_pass(){
 		Ranker test = new Ranker();
 		test.setGenerateRanking(true);
 		boolean expected = true;
@@ -89,8 +172,23 @@ public class RankerTest {
 		assertEquals(expected, actual);
 	}
 	
+	//This test should pass because we are inputting a boolean into the set function.
+	//but the expected will not be the same as the actual because the set function is a dummy function, so it does nothing.
+	//The get function will always return true, so thats why the above test passes too. 
 	@Test
-	public void startSetTipTextTest(){
+	public void getGenerateRankingTest_fail(){
+		Ranker test = new Ranker();
+		test.setGenerateRanking(false);
+		boolean expected = false;
+		boolean actual = test.getGenerateRanking();
+		System.out.println(actual);
+		assertNotSame(expected , actual);
+	}
+	
+	//This test should pass since we are inputting nothing, we are just calling the function.
+	//So the expected should equal the actual. 
+	@Test
+	public void startSetTipTextTest_pass(){
 		Ranker test = new Ranker();
 		String expected = "Specify a set of attributes to ignore. "
 			      + " When generating the ranking, Ranker will not evaluate the attributes "
@@ -98,23 +196,122 @@ public class RankerTest {
 			      + "seperated list off attribute indexes starting at 1. It can include "
 			      + "ranges. Eg. 1,2,5-9,17.";
 		String actual = test.startSetTipText();
+		System.out.println(actual);
 		assertEquals(expected, actual);
 	}
 	
+	//This test should pass because we are not inputting anything into the function.
+	//So the expected will not equal the actual.
 	@Test
-	public void startSetTipTextTest2(){
+	public void startSetTipTextTest2_fail(){
 		Ranker test = new Ranker();
 		String expected = "Specify a set of attributes to ignore. ";
 		String actual = test.startSetTipText();
-		assert(expected != actual);
+		System.out.println(actual);
+		assertNotSame(expected , actual);
 	}
 	
+	//This test should pass since we are inputting nothing, we are just calling the function.
+	//So the expected should equal the actual. 
 	@Test
-	public void getRevisionTest() {
+	public void getRevisionTest_pass() {
 		AttributeSelection m = new AttributeSelection();
 		String actual = m.getRevision();
 		String expected = "10172";
+		System.out.println(actual);
 		assertEquals(actual , expected);
 	} 
+	
+	//This test should pass because we are not inputting anything into the function.
+	//So the expected will not equal the actual.
+	@Test
+	public void getRevisionTest_fail() {
+		AttributeSelection m = new AttributeSelection();
+		String actual = m.getRevision();
+		String expected = "10";
+		System.out.println(actual);
+		assertNotSame(actual , expected);
+	} 
+	
 
+	@SuppressWarnings("unchecked")
+	@Test
+	public void listOptions(){
+		Ranker actual = new Ranker();
+		Vector<E> options = new Vector<E>();
+		Option m = new Option("\tSpecify a starting set of attributes.\n"
+			      + "\tEg. 1,3,5-7.\n" + "\tAny starting attributes specified are\n"
+			      + "\tignored during the ranking.", "P", 1, "-P <start set>");
+		options.addElement( (E) new Option("\tSpecify a starting set of attributes.\n"
+			      + "\tEg. 1,3,5-7.\n" + "\tAny starting attributes specified are\n"
+			      + "\tignored during the ranking.", "P", 1, "-P <start set>"));
+		options.addElement((E) new Option("\tSpecify a theshold by which attributes\n"
+		        + "\tmay be discarded from the ranking.", "T", 1, "-T <threshold>"));
+		options.addElement((E)new Option("\tSpecify number of attributes to select",
+			      "N", 1, "-N <num to select>"));
+		assertNotSame(options.elements() , actual.listOptions());
+	}
+	
+	@Test
+	public void getOptionsTest1(){
+		Ranker actual = new Ranker();
+		Ranker m = new Ranker();
+		Vector<String> options = new Vector<String>();
+		
+		if(! actual.getStartSet().equals("")){
+			 options.add("-P");
+		}
+		
+		//actual.setNumToSelect(4);
+		//actual.setThreshold(76.98);
+		
+		options.add("-T");
+	    options.add("" + actual.getThreshold());
+
+	    options.add("-N");
+	    options.add("" + actual.getNumToSelect());
+	    System.out.println("The options" +options.elementAt(0));
+	    String [] l = m.getOptions();
+	    assertSame(options.elementAt(0), l[0]);
+	}
+	
+	@Test
+	public void getOptionsTest2(){
+		Ranker actual = new Ranker();
+		Ranker m = new Ranker();
+		Vector<String> options = new Vector<String>();
+		
+		if(!actual.getStartSet().equals("")){
+			 options.add("-P");
+		}
+		
+		//actual.setNumToSelect(4);
+		//actual.setThreshold(76.98);
+		
+		options.add("-T");
+	    options.add("" + actual.getThreshold());
+
+	    options.add("-N");
+	    options.add("" + actual.getNumToSelect());
+	    System.out.println("The options" +options.elementAt(0));
+	    String [] l = m.getOptions();
+	    assertSame(options.elementAt(0), l[0]);
+	}
+	
+	@Test
+	public void searchTest(){
+		Ranker actual = new Ranker();
+		
+	}
+	
+	@Test
+	public void rankedAttributesTest() throws Exception{
+		Ranker actual = new Ranker();
+		
+
+		Instances data;
+		//data.numAttributes();
+		//actual.search(n, data);
+	}
+	
 }
