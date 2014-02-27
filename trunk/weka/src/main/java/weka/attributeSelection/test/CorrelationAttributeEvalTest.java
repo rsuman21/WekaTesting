@@ -1,10 +1,13 @@
 package weka.attributeSelection.test;
 
+import java.util.Vector;
+
 import org.junit.Test;
 
 import weka.attributeSelection.CorrelationAttributeEval;
 import junit.framework.TestCase;
 import weka.core.Capabilities;
+import weka.core.Option;
 import weka.core.Capabilities.Capability;
 import weka.core.RevisionUtils;
 
@@ -15,7 +18,14 @@ public class CorrelationAttributeEvalTest extends TestCase {
 	public CorrelationAttributeEvalTest(String name) {
 		super(name);
 	}
+	public void setUp() throws Exception {
+		super.setUp();
+		CorrelationAttributeEval obj = new CorrelationAttributeEval();
+	}
 
+	public void tearDown() throws Exception {
+		super.tearDown();
+	}
 	
 	/*@Test
 	public void testgetCapabilities(){
@@ -36,7 +46,7 @@ public class CorrelationAttributeEvalTest extends TestCase {
 		expected[0]= "";
 		CorrelationAttributeEval obj = new CorrelationAttributeEval();
 		String[] actual = obj.getOptions();
-		assert(expected!= actual);
+		assertNotSame(expected, actual);
 		
 	}
 	/*
@@ -46,10 +56,36 @@ public class CorrelationAttributeEvalTest extends TestCase {
 	@Test
 	public void testgetOptions_fail() {
 		String[] expected = new String[1];
-		expected[0]= "D";
+		expected[0]= "A";
 		CorrelationAttributeEval obj = new CorrelationAttributeEval();
 		String[] actual = obj.getOptions();
-		assert(expected!= actual);
+		assertNotSame(expected, actual);
+		
+	}
+	
+	@Test
+	public void testgetOptions_ifstatement(){
+		String[] expected = new String[1];
+		expected[0]= "-D";
+		CorrelationAttributeEval obj = new CorrelationAttributeEval();
+		obj.setOutputDetailedInfo(true);
+		boolean output = obj.getOutputDetailedInfo();
+		assertEquals(true,output);
+		String[] actual = obj.getOptions();
+		assertEquals(expected[0], actual[0]);
+		
+	}
+	
+	@Test
+	public void testgetOptions_elsestatement(){
+		String[] expected = new String[1];
+		expected[0]= "";
+		CorrelationAttributeEval obj = new CorrelationAttributeEval();
+		obj.setOutputDetailedInfo(false);
+		boolean output = obj.getOutputDetailedInfo();
+		assertEquals(false,output);
+		String[] actual = obj.getOptions();
+		assertEquals(expected[0], actual[0]);
 		
 	}
 	
@@ -57,7 +93,7 @@ public class CorrelationAttributeEvalTest extends TestCase {
      *The test should pass if the actual value equals expected values.
      */
 	@Test
-	public void testGetRevision_pass() {
+	public void testGetRevision_valid_inputs() {
 		String expected = RevisionUtils.extract("$Revision: 10172 $");
 		CorrelationAttributeEval obj = new CorrelationAttributeEval();
 		String actual = obj.getRevision();
@@ -65,6 +101,13 @@ public class CorrelationAttributeEvalTest extends TestCase {
 		"got" + actual + "\n" ,expected, actual);
 	}
 	
+	@Test
+	public void testGetRevision_empty_inputs() {
+		String expected = RevisionUtils.extract(" ");
+		CorrelationAttributeEval obj = new CorrelationAttributeEval();
+		String actual = obj.getRevision();
+		assertNotSame(expected, actual);
+	}
 	/* This test case tests the revision of the algorithm 
      *The test should pass if the actual value not equals expected values.
      */
@@ -73,7 +116,7 @@ public class CorrelationAttributeEvalTest extends TestCase {
 		String expected = RevisionUtils.extract("$Revision: 10111 $");
 		CorrelationAttributeEval obj = new CorrelationAttributeEval();
 		String actual = obj.getRevision();
-		assert(expected!= actual);
+		assertNotSame(expected, actual);
 	}
 	
 	/* This test case tests check the detail info tip of the algorithm 
@@ -96,7 +139,7 @@ public class CorrelationAttributeEvalTest extends TestCase {
 		String expected = "Output";
 		CorrelationAttributeEval obj = new CorrelationAttributeEval();
 		String actual = obj.outputDetailedInfoTipText();
-		assert(expected!= actual);
+		assertNotSame(expected, actual);
 	}
 	/* This test case tests check the detail info of the algorithm 
      *The test should pass if the actual value equals expected values.
@@ -117,7 +160,7 @@ public class CorrelationAttributeEvalTest extends TestCase {
 		boolean expected = true;
 		CorrelationAttributeEval obj = new CorrelationAttributeEval();
 		boolean actual = obj.getOutputDetailedInfo();
-		assert(expected!= actual);
+		assertNotSame(expected, actual);
 		
 	}
 	
@@ -130,7 +173,19 @@ public class CorrelationAttributeEvalTest extends TestCase {
 		String expected = "CorrelationAttributeEval";
 		CorrelationAttributeEval obj = new CorrelationAttributeEval();
 		String actual = obj.globalInfo();
-		assert(expected!= actual);
+		assertNotSame(expected, actual);
+	}
+	
+	@Test
+	public void testglobalInfo_pass(){
+		String expected =  "CorrelationAttributeEval :\n\nEvaluates the worth of an attribute "
+			      + "by measuring the correlation (Pearson's) between it and the class.\n\n"
+			      + "Nominal attributes are considered on a value by "
+			      + "value basis by treating each value as an indicator. An overall "
+			      + "correlation for a nominal attribute is arrived at via a weighted average.\n";
+		CorrelationAttributeEval obj = new CorrelationAttributeEval();
+		String actual = obj.globalInfo();
+		assertEquals(expected, actual);
 	}
 
 	/* This test case tests sets the output info of the algorithm 
@@ -145,5 +200,19 @@ public class CorrelationAttributeEvalTest extends TestCase {
 		assertEquals(expected,actual);
 		
 	}
+	
+	@Test
+	public void testsetOptions_null_inputs() throws Exception{
+		String[] expected = null;
+		CorrelationAttributeEval obj = new CorrelationAttributeEval();
+		obj.setOptions(expected);
+		String[] actual = obj.getOptions();
+		assertNotSame(expected, actual);
+	}
+	
+		
+	
+	
+	
 	
 }
